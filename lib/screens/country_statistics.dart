@@ -1,6 +1,11 @@
+import 'package:covid_19_live_tracker/widgets/counter.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 
+import '../constant.dart';
+import '../utils/constants.dart';
+import '../utils/constants.dart';
+import '../utils/constants.dart';
 import 'chart.dart';
 
 import '../utils/constants.dart';
@@ -9,41 +14,98 @@ import '../models/country_summary.dart';
 import '../models/time_series_cases.dart';
 
 class CountryStatistics extends StatelessWidget {
-
   final List<CountrySummaryModel> summaryList;
 
   CountryStatistics({@required this.summaryList});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(100),
+              image: DecorationImage(
+                image: AssetImage("assets/images/stayhome.jpg"),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Counter(
+                  color: kConfirmedColor,
+                  number: summaryList[summaryList.length - 1]
+                      .confirmed
+                      .toString()
+                      .replaceAllMapped(reg, mathFunc),
+                  title: "Confirmed",
+                ),
+                Counter(
+                  color: kActiveColor,
+                  number: summaryList[summaryList.length - 1]
+                      .active
+                      .toString()
+                      .replaceAllMapped(reg, mathFunc),
+                  title: "Active",
+                ),
+              ],
+            ),
+          ),
 
-        buildCard(
-          "CONFIRMED",
-          summaryList[summaryList.length - 1].confirmed,
-          kConfirmedColor,
-          "ACTIVE",
-          summaryList[summaryList.length - 1].active,
-          kActiveColor,
-        ),
-
-        buildCard(
-          "RECOVERED",
-          summaryList[summaryList.length - 1].recovered,
-          kRecoveredColor,
-          "DEATH",
-          summaryList[summaryList.length - 1].death,
-          kDeathColor,
-        ),
-
-        buildCardChart(summaryList),
-
-      ],
+          /* buildCard(
+            "CONFIRMED",
+            summaryList[summaryList.length - 1].confirmed,
+            kConfirmedColor,
+            "ACTIVE",
+            summaryList[summaryList.length - 1].active,
+            kActiveColor,
+          ), */
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Counter(
+                  color: kRecoveredColor,
+                  number: summaryList[summaryList.length - 1]
+                      .recovered
+                      .toString()
+                      .replaceAllMapped(reg, mathFunc),
+                  title: "Recovered",
+                ),
+                Counter(
+                  color: kDeathColor,
+                  number: summaryList[summaryList.length - 1]
+                      .death
+                      .toString()
+                      .replaceAllMapped(reg, mathFunc),
+                  title: "Death",
+                ),
+              ],
+            ),
+          ),
+          /* buildCard(
+            "RECOVERED",
+            summaryList[summaryList.length - 1].recovered,
+            kRecoveredColor,
+            "DEATH",
+            summaryList[summaryList.length - 1].death,
+            kDeathColor,
+          ), */
+          buildCardChart(summaryList),
+        ],
+      ),
     );
   }
 
-  Widget buildCard(String leftTitle, int leftValue, Color leftColor, String rightTitle, int rightValue, Color rightColor){
+  Widget buildCard(String leftTitle, int leftValue, Color leftColor,
+      String rightTitle, int rightValue, Color rightColor) {
     return Card(
       elevation: 1,
       child: Container(
@@ -52,11 +114,9 @@ class CountryStatistics extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-
                 Text(
                   leftTitle,
                   style: TextStyle(
@@ -65,11 +125,9 @@ class CountryStatistics extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-
                 Expanded(
                   child: Container(),
                 ),
-
                 Text(
                   "Total",
                   style: TextStyle(
@@ -78,7 +136,6 @@ class CountryStatistics extends StatelessWidget {
                     fontSize: 12,
                   ),
                 ),
-
                 Text(
                   leftValue.toString().replaceAllMapped(reg, mathFunc),
                   style: TextStyle(
@@ -89,11 +146,9 @@ class CountryStatistics extends StatelessWidget {
                 ),
               ],
             ),
-
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-
                 Text(
                   rightTitle,
                   style: TextStyle(
@@ -102,12 +157,10 @@ class CountryStatistics extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-
                 Expanded(
                   child: Container(),
                 ),
-
-                 Text(
+                Text(
                   "Total",
                   style: TextStyle(
                     color: rightColor,
@@ -115,7 +168,6 @@ class CountryStatistics extends StatelessWidget {
                     fontSize: 12,
                   ),
                 ),
-
                 Text(
                   rightValue.toString().replaceAllMapped(reg, mathFunc),
                   style: TextStyle(
@@ -126,14 +178,13 @@ class CountryStatistics extends StatelessWidget {
                 ),
               ],
             ),
-
           ],
         ),
       ),
     );
   }
 
-  Widget buildCardChart(List<CountrySummaryModel> summaryList){
+  Widget buildCardChart(List<CountrySummaryModel> summaryList) {
     return Card(
       elevation: 1,
       child: Container(
@@ -147,8 +198,8 @@ class CountryStatistics extends StatelessWidget {
     );
   }
 
-  static List<charts.Series<TimeSeriesCases, DateTime>> _createData(List<CountrySummaryModel> summaryList) {
-
+  static List<charts.Series<TimeSeriesCases, DateTime>> _createData(
+      List<CountrySummaryModel> summaryList) {
     List<TimeSeriesCases> confirmedData = [];
     List<TimeSeriesCases> activeData = [];
     List<TimeSeriesCases> recoveredData = [];
@@ -161,7 +212,7 @@ class CountryStatistics extends StatelessWidget {
       deathData.add(TimeSeriesCases(item.date, item.death));
     }
 
-    return [      
+    return [
       new charts.Series<TimeSeriesCases, DateTime>(
         id: 'Confirmed',
         colorFn: (_, __) => charts.ColorUtil.fromDartColor(kConfirmedColor),
@@ -190,8 +241,6 @@ class CountryStatistics extends StatelessWidget {
         measureFn: (TimeSeriesCases cases, _) => cases.cases,
         data: deathData,
       ),
-      
     ];
   }
-
 }

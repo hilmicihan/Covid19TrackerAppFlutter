@@ -15,7 +15,6 @@ class Global extends StatefulWidget {
 }
 
 class _GlobalState extends State<Global> {
-
   Future<GlobalSummaryModel> summary;
 
   @override
@@ -26,60 +25,65 @@ class _GlobalState extends State<Global> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-
-              Text(
-                "Global Corona Virus Cases",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Global Corona Virus Cases",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          summary = covidService.getGlobalSummary();
+                        });
+                      },
+                      child: Icon(
+                        Icons.refresh,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    summary = covidService.getGlobalSummary();
-                  });
-                },
-                child: Icon(
-                  Icons.refresh,
-                  color: Colors.white,
-                ),
-              ),
-
-            ],
+            ),
           ),
-        ),
-
-        FutureBuilder(
-          future: summary,
-          builder: (context, snapshot) {
-            if (snapshot.hasError)
-              return Center(child: Text("Error"),);
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting: 
-                return GlobalLoading();
-              default:
-                return !snapshot.hasData 
-                  ? Center(child: Text("Empty"),)
-                  : GlobalStatistics(
-                    summary: snapshot.data,
-                  );
-            }
-          },
-        ),
-        
-      ],
+          FutureBuilder(
+            future: summary,
+            builder: (context, snapshot) {
+              if (snapshot.hasError)
+                return Center(
+                  child: Text("Error"),
+                );
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
+                  return GlobalLoading();
+                default:
+                  return !snapshot.hasData
+                      ? Center(
+                          child: Text("Empty"),
+                        )
+                      : GlobalStatistics(
+                          summary: snapshot.data,
+                        );
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 }

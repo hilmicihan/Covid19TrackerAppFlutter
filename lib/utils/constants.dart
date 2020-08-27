@@ -9,10 +9,6 @@ Color kDeathColor = Color(0xFF6D757D);
 LinearGradient kGradientShimmer = LinearGradient(
   begin: Alignment.centerLeft,
   end: Alignment.centerRight,
-  colors: [
-    Colors.grey[300],
-    Colors.grey[100],
-  ],
 );
 
 RegExp reg = new RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
